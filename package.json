@@ -1,0 +1,28 @@
+{
+  "name": "plancraft",
+  "version": "1.0.0",
+  "description": "PlanCraft — The 10-Minute Lesson Architect | A responsive lesson-planning web application built with HTML, CSS, and JavaScript.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  },
+  "keywords": [
+    "plancraft",
+    "lesson-planner",
+    "education",
+    "edtech",
+    "javascript",
+    "html",
+    "css",
+    "frontend",
+    "web-application",
+    "zerocode"
+  ],
+  "license": "MIT"
+}

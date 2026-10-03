@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>PlanCraft • The 10-Min Lesson Architect</title>
+    <meta
+      name="description"
+      content="Instant high-energy lesson planner for educators in a rush. Drop your topic, pick class level and minutes, and get an exact, timed pedagogical plan with real-time bell reminders in seconds."
+    />
+    <meta property="og:title" content="PlanCraft • The 10-Min Lesson Architect" />
+    <meta
+      property="og:description"
+      content="Instant high-energy lesson planner for educators in a rush. Drop your topic, pick class level and minutes, and get an exact, timed pedagogical plan with real-time bell reminders in seconds."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#FFE600" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Top Mega Nav Banner -->
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-avatar" aria-hidden="true">⚡</div>
+          <div class="brand-text">
+            <div class="brand-title-row">
+              <span class="brand-title">PlanCraft</span>
+              <span class="genz-pill fire-pill">🔥 10s Prep</span>
+              <span class="genz-pill native-pill">⚡ Native Web</span>
+            </div>
+            <p class="brand-tagline">No fluff. Pure timing. Cook your lesson plan with bell reminders before class.</p>
+          </div>
+        </div>
+
+        <div class="header-right-tools">
+          <button type="button" id="saved-plans-btn" class="chunky-btn sm-btn outline-btn" aria-label="Open saved lesson plans">
+            <span class="btn-emoji">📁</span>
+            <span class="btn-text">My Stash</span>
+            <span id="saved-plans-badge" class="counter-badge">0</span>
+          </button>
+
+          <button type="button" id="theme-toggle-btn" class="chunky-btn sm-btn icon-only-btn" title="Toggle Dark/Light Mode" aria-label="Toggle theme">
+            <span class="theme-icon sun-icon">☀️</span>
+            <span class="theme-icon moon-icon hidden">🌙</span>
+          </button>
+
+          <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span class="status-label">100% Offline</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-stage">
+      <!-- Bento Input Studio -->
+      <section class="bento-box hero-builder-box" aria-labelledby="builder-title">
+        <div class="bento-header">
+          <div class="header-stickers">
+            <span class="sticker sticker-yellow">🚀 TEACHER HACK</span>
+            <span class="sticker sticker-cyan">⏱️ EXACT TIME CHECK</span>
+            <span class="sticker sticker-lime">🔔 BELL REMINDERS</span>
+            <span class="sticker sticker-pink">✨ ZERO AI SLOP</span>
+          </div>
+          <h1 id="builder-title" class="bento-title">Cook Tomorrow's Lesson Plan 🍳</h1>
+          <p class="bento-subtitle">Got 10 minutes before class? Fill these fields, hit Generate, and teach with exact timing & reminder alerts.</p>
+        </div>
+
+        <form id="lesson-form" class="builder-form" novalidate>
+          <!-- Subject Preset Chips Bar -->
+          <div class="subject-bar">
+            <span class="subject-bar-title">Vibe / Subject:</span>
+            <div class="subject-pills-scroll" role="tablist">
+              <button type="button" class="subject-pill active" data-subject="all">⚡ All Starters</button>
+              <button type="button" class="subject-pill" data-subject="stem">🔬 Science & STEM</button>
+              <button type="button" class="subject-pill" data-subject="math">📐 Mathematics</button>
+              <button type="button" class="subject-pill" data-subject="humanities">✍️ English & ELA</button>
+              <button type="button" class="subject-pill" data-subject="history">🌍 History & Social</button>
+              <button type="button" class="subject-pill" data-subject="arts">🎨 Arts & Code</button>
+            </div>
+          </div>
+
+          <!-- Input Bento Grid -->
+          <div class="bento-inputs-grid">
+            <!-- Topic Input Field -->
+            <div class="input-card topic-card">
+              <div class="card-label-row">
+                <label for="topic-input" class="card-label">
+                  <span class="label-icon">🎯</span> 1. What are you teaching?
+                  <span class="mandatory-star">*</span>
+                </label>
+                <span id="topic-char-count" class="meta-tag">Required</span>
+              </div>
+              <div class="chunky-input-wrap">
+                <input
+                  type="text"
+                  id="topic-input"
+                  name="topic"
+                  class="chunky-input"
+                  placeholder="e.g., Photosynthesis & Respiration, Quadratic Equations, The Cold War..."
+                  autocomplete="off"
+                  required
+                />
+                <button type="button" id="clear-topic-btn" class="input-clear-x hidden" aria-label="Clear topic">&times;</button>
+              </div>
+
+              <!-- Quick Topic Chips -->
+              <div class="topic-chips-wrapper">
+                <span class="mini-hint">Tap to auto-fill:</span>
+                <div id="topic-chips" class="topic-chips-cloud">
+                  <!-- Injected dynamically via JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Class Level Field -->
+            <div class="input-card level-card">
+              <div class="card-label-row">
+                <label for="class-level-select" class="card-label">
+                  <span class="label-icon">👥</span> 2. Who is in the room?
+                  <span class="mandatory-star">*</span>
+                </label>
+                <span class="meta-tag">Grade Level</span>
+              </div>
+              <div class="select-chunky-wrap">
+                <select id="class-level-select" name="classLevel" class="chunky-select">
+                  <option value="Elementary School (Grades K-5)">Elementary (Grades K-5) 🎈</option>
+                  <option value="Middle School (Grades 6-8)" selected>Middle School (Grades 6-8) 🛹</option>
+                  <option value="High School (Grades 9-12)">High School (Grades 9-12) 🎒</option>
+                  <option value="College / Higher Education">College / University 🎓</option>
+                  <option value="Adult / Continuing Education">Adult & Professional 💼</option>
+                </select>
+              </div>
+              <p class="card-hint">Calibrates cognitive load, discussion protocols, and student autonomy.</p>
+            </div>
+
+            <!-- Total Minutes Field -->
+            <div class="input-card minutes-card">
+              <div class="card-label-row">
+                <label for="minutes-input" class="card-label">
+                  <span class="label-icon">⏱️</span> 3. Total Class Minutes
+                  <span class="mandatory-star">*</span>
+                </label>
+                <span id="duration-helper-text" class="meta-tag highlight-tag">Standard Period</span>
+              </div>
+              <div class="chunky-input-wrap">
+                <input
+                  type="number"
+                  id="minutes-input"
+                  name="totalMinutes"
+                  class="chunky-input minute-number-input"
+                  placeholder="e.g. 10, 45, 60"
+                  step="1"
+                  min="1"
+                  value="45"
+                />
+                <span class="input-unit">MINS</span>
+              </div>
+
+              <!-- Quick Minute Pills -->
+              <div class="minute-pill-row" aria-label="Preset class durations">
+                <button type="button" class="min-preset-btn" data-min="10">⚡ 10m Sprint</button>
+                <button type="button" class="min-preset-btn" data-min="30">🚀 30m Mini</button>
+                <button type="button" class="min-preset-btn active" data-min="45">🔥 45m Period</button>
+                <button type="button" class="min-preset-btn" data-min="60">⌛ 60m Hour</button>
+                <button type="button" class="min-preset-btn" data-min="90">🧱 90m Block</button>
+              </div>
+            </div>
+
+            <!-- Teaching Format / Pedagogy Vibe -->
+            <div class="input-card style-card">
+              <div class="card-label-row">
+                <label for="lesson-style-select" class="card-label">
+                  <span class="label-icon">🎭</span> 4. Lesson Format & Vibe
+                </label>
+                <span class="meta-tag">Pedagogy</span>
+              </div>
+              <div class="select-chunky-wrap">
+                <select id="lesson-style-select" name="lessonStyle" class="chunky-select">
+                  <option value="balanced" selected>Standard Balanced (Hook &bull; Model &bull; Practice &bull; Exit)</option>
+                  <option value="interactive">High Energy & Collaboration (Heavy Peer Groups & Lab)</option>
+                  <option value="direct">Direct Instruction & Mastery (Step-by-Step Drills)</option>
+                  <option value="inquiry">Socratic Inquiry & Debate (Critical Thinking Arc)</option>
+                </select>
+              </div>
+              <p class="card-hint">Shapes the exact balance between teacher modeling and student execution.</p>
+            </div>
+
+            <!-- Time Section with Notification Reminder -->
+            <div class="input-card time-reminder-card">
+              <div class="card-label-row">
+                <label for="start-time-input" class="card-label">
+                  <span class="label-icon">🕒</span> 5. Schedule & Notification Reminders
+                </label>
+                <button type="button" id="set-now-time-btn" class="chunky-btn sm-btn outline-btn" style="padding: 0.2rem 0.55rem; font-size: 0.75rem;">
+                  ⚡ Set Current Time
+                </button>
+              </div>
+              <div class="time-reminder-row">
+                <div class="chunky-input-wrap" style="flex: 1;">
+                  <input
+                    type="time"
+                    id="start-time-input"
+                    name="startTime"
+                    class="chunky-input"
+                    value="09:00"
+                    title="Class start time for bell schedule mapping"
+                  />
+                </div>
+                <div class="select-chunky-wrap" style="flex: 1.2;">
+                  <select id="reminder-warning-select" name="reminderWarning" class="chunky-select" title="Notification reminder advance warning">
+                    <option value="2" selected>⚠️ 2-min warning reminder</option>
+                    <option value="1">⚠️ 1-min warning reminder</option>
+                    <option value="3">⚠️ 3-min warning reminder</option>
+                    <option value="0">End-of-phase chime only</option>
+                  </select>
+                </div>
+              </div>
+              <div class="reminder-permission-bar">
+                <button type="button" id="enable-notifs-btn" class="chunky-btn sm-btn outline-btn">
+                  <span id="notif-btn-icon">🔔</span>
+                  <span id="notif-btn-text">Enable Browser Notifications</span>
+                </button>
+                <span id="notif-status-badge" class="meta-tag">Permission: Default</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Big Action Deck -->
+          <div class="action-deck">
+            <div class="action-deck-left">
+              <button type="submit" id="generate-btn" class="chunky-btn big-btn glow-btn">
+                <span class="btn-emoji">✨</span>
+                <span>Generate Lesson Plan</span>
+                <kbd class="shortcut-kbd">⌘ + Enter</kbd>
+              </button>
+              <button type="button" id="reset-btn" class="chunky-btn big-btn outline-btn">
+                <span>🔄 Reset</span>
+              </button>
+            </div>
+            <div class="action-deck-right">
+              <span class="deck-trust-badge">🔒 100% Client-Side &bull; Persists on Reload</span>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Feedback / Error Banner (Requirement 4: Empty, Zero, or Negative minutes) -->
+      <section
+        id="message-banner"
+        class="bento-box error-bento-box hidden"
+        role="alert"
+        aria-live="polite"
+      >
+        <div class="error-badge-icon">🛑</div>
+        <div class="error-content">
+          <h2 id="message-title" class="error-title">Hold Up! Invalid Duration</h2>
+          <p id="message-text" class="error-description">
+            Please enter a valid class duration greater than 0 minutes. A lesson plan cannot be generated for empty, zero, or negative time!
+          </p>
+        </div>
+        <button type="button" id="dismiss-message-btn" class="dismiss-cross-btn" aria-label="Dismiss error">&times;</button>
+      </section>
+
+      <!-- Lesson Plan Container (Rendered on valid plan) -->
+      <section id="plan-container" class="plan-presentation-zone hidden" aria-labelledby="plan-heading">
+        <!-- Rendered dynamically by script.js -->
+      </section>
+    </main>
+
+    <!-- Floating Live Reminder Active Banner (visible when live schedule or timer is running) -->
+    <aside id="live-reminder-hud" class="live-reminder-hud hidden" role="status" aria-live="polite">
+      <div class="hud-left">
+        <span class="hud-pulse-ring"></span>
+        <div>
+          <span class="hud-tag">Active Schedule Reminder</span>
+          <p id="hud-status-text" class="hud-text">Phase 1: In Progress &bull; 00:00 remaining</p>
+        </div>
+      </div>
+      <div class="hud-actions">
+        <button type="button" id="hud-open-timer-btn" class="chunky-btn sm-btn primary-btn">⏱️ View Timer</button>
+        <button type="button" id="hud-dismiss-btn" class="chunky-btn sm-btn outline-btn" aria-label="Close HUD">&times;</button>
+      </div>
+    </aside>
+
+    <!-- Floating Sticky Action Bar for Mobile & Tablet -->
+    <nav id="mobile-action-bar" class="mobile-bottom-dock hidden" aria-label="Mobile quick actions">
+      <button type="button" id="mobile-timer-btn" class="dock-btn primary-dock-btn">
+        <span class="dock-icon">⏱️</span>
+        <span class="dock-text">Timer</span>
+      </button>
+      <button type="button" id="mobile-copy-btn" class="dock-btn">
+        <span class="dock-icon">📋</span>
+        <span class="dock-text">Copy</span>
+      </button>
+      <button type="button" id="mobile-print-btn" class="dock-btn">
+        <span class="dock-icon">🖨️</span>
+        <span class="dock-text">Print</span>
+      </button>
+      <button type="button" id="mobile-share-btn" class="dock-btn">
+        <span class="dock-icon">🔗</span>
+        <span class="dock-text">Share</span>
+      </button>
+    </nav>
+
+    <!-- Live Presenter Countdown Modal -->
+    <div id="timer-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-bento-card">
+        <div class="modal-head">
+          <div class="modal-head-left">
+            <span class="sticker sticker-purple">CLASSROOM VIBE MODE</span>
+            <h2 id="modal-title" class="modal-heading">Active Teaching Timer</h2>
+          </div>
+          <div class="modal-head-right">
+            <button type="button" id="timer-sound-btn" class="chunky-btn sm-btn outline-btn" title="Toggle Chime Sound">
+              🔔 Sound: On
+            </button>
+            <button type="button" id="close-timer-btn" class="close-round-btn" aria-label="Close timer">&times;</button>
+          </div>
+        </div>
+
+        <div class="modal-body-timer">
+          <div id="timer-section-name" class="timer-phase-pill">Phase 1: Hook & Warm-up</div>
+          <div id="timer-display" class="giant-timer-clock">00:00</div>
+          
+          <!-- Live warning reminder notice in timer -->
+          <div id="timer-warning-alert" class="timer-warning-banner hidden">
+            ⚠️ Reminder: Wrap up discussion & prepare for next phase!
+          </div>
+
+          <p id="timer-subtext" class="timer-instruction">Remaining in this phase &bull; Hit [Space] to pause/resume</p>
+          
+          <div class="timer-track-outer">
+            <div id="timer-progress-bar" class="timer-track-fill" style="width: 0%;"></div>
+          </div>
+
+          <div id="timer-guide-box" class="timer-coach-card">
+            <!-- Active guidance injected here -->
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <button type="button" id="timer-prev-btn" class="chunky-btn outline-btn">&larr; Prev Phase (P)</button>
+          <button type="button" id="timer-toggle-btn" class="chunky-btn primary-btn glow-btn">Start Timer (Space)</button>
+          <button type="button" id="timer-next-btn" class="chunky-btn outline-btn">Next Phase (N) &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Stash / Saved Plans Drawer -->
+    <div id="saved-plans-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="saved-modal-title">
+      <div class="modal-bento-card stash-drawer-card">
+        <div class="modal-head">
+          <div>
+            <span class="sticker sticker-yellow">SAVED CLASS PERIODS</span>
+            <h2 id="saved-modal-title" class="modal-heading">My Lesson Stash</h2>
+          </div>
+          <button type="button" id="close-saved-modal-btn" class="close-round-btn" aria-label="Close stash">&times;</button>
+        </div>
+        <div class="stash-body">
+          <div class="stash-actions-top">
+            <button type="button" id="save-current-plan-btn" class="chunky-btn primary-btn sm-btn">
+              💾 Save Current Plan to Stash
+            </button>
+            <span class="stash-helper-note">All saved safely in your browser offline.</span>
+          </div>
+          <div id="saved-plans-list" class="saved-plans-stack">
+            <!-- Populated via script.js -->
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" id="clear-all-plans-btn" class="chunky-btn sm-btn danger-btn">Clear All</button>
+          <button type="button" id="done-saved-modal-btn" class="chunky-btn sm-btn outline-btn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Link Modal -->
+    <div id="share-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+      <div class="modal-bento-card share-card">
+        <div class="modal-head">
+          <div>
+            <span class="sticker sticker-cyan">ONE-TAP LINK</span>
+            <h2 id="share-modal-title" class="modal-heading">Share This Plan</h2>
+          </div>
+          <button type="button" id="close-share-modal-btn" class="close-round-btn" aria-label="Close share dialog">&times;</button>
+        </div>
+        <div class="modal-body-simple">
+          <p class="share-info-text">
+            Send this exact lesson plan to a co-teacher or substitute. It preserves all timings, activities, and custom notes automatically.
+          </p>
+          <div class="share-box-row">
+            <input type="text" id="share-url-input" class="chunky-input" readonly />
+            <button type="button" id="copy-share-url-btn" class="chunky-btn primary-btn">Copy Link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="pop-toast hidden" role="status" aria-live="polite"></div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
