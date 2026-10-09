@@ -36,10 +36,25 @@
         </div>
 
         <div class="header-right-tools">
+          <button type="button" id="unit-planner-btn" class="chunky-btn sm-btn outline-btn" aria-label="Open multi-day unit planner">
+            <span class="btn-emoji">📚</span>
+            <span class="btn-text">Unit Planner</span>
+          </button>
+
+          <button type="button" id="analytics-btn" class="chunky-btn sm-btn outline-btn" aria-label="Open teaching progress analytics">
+            <span class="btn-emoji">📊</span>
+            <span class="btn-text">Analytics</span>
+          </button>
+
           <button type="button" id="saved-plans-btn" class="chunky-btn sm-btn outline-btn" aria-label="Open saved lesson plans">
             <span class="btn-emoji">📁</span>
             <span class="btn-text">My Stash</span>
             <span id="saved-plans-badge" class="counter-badge">0</span>
+          </button>
+
+          <button type="button" id="ai-settings-btn" class="chunky-btn sm-btn outline-btn" title="AI & Privacy Settings" aria-label="Open AI and privacy settings">
+            <span class="btn-emoji">⚙️</span>
+            <span class="btn-text">Engine</span>
           </button>
 
           <button type="button" id="theme-toggle-btn" class="chunky-btn sm-btn icon-only-btn" title="Toggle Dark/Light Mode" aria-label="Toggle theme">
@@ -47,9 +62,9 @@
             <span class="theme-icon moon-icon hidden">🌙</span>
           </button>
 
-          <div class="status-indicator">
+          <div class="status-indicator" id="network-status-indicator" title="Application running client-side offline">
             <span class="pulse-dot"></span>
-            <span class="status-label">100% Offline</span>
+            <span class="status-label" id="network-status-label">100% Offline</span>
           </div>
         </div>
       </div>
@@ -319,6 +334,9 @@
             <button type="button" id="timer-sound-btn" class="chunky-btn sm-btn outline-btn" title="Toggle Chime Sound">
               🔔 Sound: On
             </button>
+            <button type="button" id="timer-fullscreen-btn" class="chunky-btn sm-btn outline-btn" title="Toggle Classroom Fullscreen Presentation Mode (F)">
+              ⛶ Fullscreen (F)
+            </button>
             <button type="button" id="close-timer-btn" class="close-round-btn" aria-label="Close timer">&times;</button>
           </div>
         </div>
@@ -332,7 +350,7 @@
             ⚠️ Reminder: Wrap up discussion & prepare for next phase!
           </div>
 
-          <p id="timer-subtext" class="timer-instruction">Remaining in this phase &bull; Hit [Space] to pause/resume</p>
+          <p id="timer-subtext" class="timer-instruction">Remaining in this phase &bull; Hit [Space] to pause/resume &bull; [F] for Fullscreen</p>
           
           <div class="timer-track-outer">
             <div id="timer-progress-bar" class="timer-track-fill" style="width: 0%;"></div>
@@ -345,6 +363,7 @@
 
         <div class="modal-foot">
           <button type="button" id="timer-prev-btn" class="chunky-btn outline-btn">&larr; Prev Phase (P)</button>
+          <button type="button" id="timer-reset-btn" class="chunky-btn outline-btn">↺ Reset Phase</button>
           <button type="button" id="timer-toggle-btn" class="chunky-btn primary-btn glow-btn">Start Timer (Space)</button>
           <button type="button" id="timer-next-btn" class="chunky-btn outline-btn">Next Phase (N) &rarr;</button>
         </div>
@@ -368,6 +387,37 @@
             </button>
             <span class="stash-helper-note">All saved safely in your browser offline.</span>
           </div>
+
+          <!-- Stash Search & Filter Bar -->
+          <div class="stash-filter-bar">
+            <input
+              type="text"
+              id="stash-search-input"
+              class="chunky-input sm-input"
+              placeholder="🔍 Search plans by topic, level, or keywords..."
+              aria-label="Search saved plans"
+            />
+            <select id="stash-filter-level" class="chunky-select sm-select" aria-label="Filter by grade level">
+              <option value="">All Grade Levels</option>
+              <option value="Elementary">Elementary (K-5)</option>
+              <option value="Middle">Middle School (6-8)</option>
+              <option value="High">High School (9-12)</option>
+              <option value="College">College / Univ</option>
+              <option value="Adult">Adult / Pro</option>
+            </select>
+          </div>
+
+          <!-- Backup & Restore Toolbar -->
+          <div class="stash-backup-toolbar">
+            <button type="button" id="export-backup-btn" class="chunky-btn sm-btn outline-btn" title="Download versioned JSON backup of all saved plans">
+              📦 Backup All (JSON)
+            </button>
+            <label for="restore-backup-file-input" class="chunky-btn sm-btn outline-btn file-upload-btn" title="Import a plan or restore backup from JSON">
+              📥 Import / Restore JSON
+              <input type="file" id="restore-backup-file-input" accept=".json,application/json" class="visually-hidden" />
+            </label>
+          </div>
+
           <div id="saved-plans-list" class="saved-plans-stack">
             <!-- Populated via script.js -->
           </div>
@@ -375,6 +425,220 @@
         <div class="modal-foot">
           <button type="button" id="clear-all-plans-btn" class="chunky-btn sm-btn danger-btn">Clear All</button>
           <button type="button" id="done-saved-modal-btn" class="chunky-btn sm-btn outline-btn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Day Unit Planner Modal -->
+    <div id="unit-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="unit-modal-title">
+      <div class="modal-bento-card unit-modal-card">
+        <div class="modal-head">
+          <div>
+            <span class="sticker sticker-lime">CURRICULAR PROGRESSION</span>
+            <h2 id="unit-modal-title" class="modal-heading">Multi-Day Unit Workspace 📚</h2>
+          </div>
+          <button type="button" id="close-unit-modal-btn" class="close-round-btn" aria-label="Close unit workspace">&times;</button>
+        </div>
+        <div class="modal-body-scrollable">
+          <p class="unit-intro-desc">
+            Link individual lessons into a structured learning arc. Track progressive mastery, prerequisite concepts, and cumulative instructional minutes.
+          </p>
+          
+          <div class="unit-builder-meta-grid">
+            <div class="input-card">
+              <label for="unit-title-input" class="card-label">Unit Title & Scope</label>
+              <input type="text" id="unit-title-input" class="chunky-input" placeholder="e.g. Unit 4: Cellular Respiration & Ecosystems" />
+            </div>
+            <div class="input-card">
+              <label for="unit-essential-question" class="card-label">Overarching Big Idea / Essential Question</label>
+              <input type="text" id="unit-essential-question" class="chunky-input" placeholder="e.g. How does energy flow between organisms to maintain life?" />
+            </div>
+          </div>
+
+          <div class="unit-days-header-row">
+            <h3 class="unit-days-heading">Sequenced Lesson Days</h3>
+            <div class="unit-days-actions">
+              <button type="button" id="add-unit-day-btn" class="chunky-btn sm-btn primary-btn">+ Add Next Day</button>
+              <button type="button" id="link-active-to-unit-btn" class="chunky-btn sm-btn outline-btn">Attach Current Active Plan</button>
+            </div>
+          </div>
+
+          <div id="unit-days-container" class="unit-days-stack">
+            <!-- Rendered dynamically via script.js -->
+          </div>
+
+          <div id="unit-summary-card" class="unit-summary-pill">
+            <span id="unit-total-days-badge">0 Days Planned</span> &bull; 
+            <span id="unit-total-mins-badge">0 Total Minutes</span> &bull; 
+            <span>100% Client-Side Persisted</span>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" id="export-unit-json-btn" class="chunky-btn sm-btn outline-btn">📦 Export Unit (JSON)</button>
+          <button type="button" id="save-unit-btn" class="chunky-btn sm-btn primary-btn">Save Unit</button>
+          <button type="button" id="close-unit-foot-btn" class="chunky-btn sm-btn outline-btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teaching Progress & Analytics Modal -->
+    <div id="analytics-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="analytics-modal-title">
+      <div class="modal-bento-card analytics-modal-card">
+        <div class="modal-head">
+          <div>
+            <span class="sticker sticker-cyan">LOCAL CLASSROOM DATA</span>
+            <h2 id="analytics-modal-title" class="modal-heading">Teaching Progress Analytics 📊</h2>
+          </div>
+          <button type="button" id="close-analytics-modal-btn" class="close-round-btn" aria-label="Close analytics">&times;</button>
+        </div>
+        <div class="modal-body-scrollable">
+          <p class="analytics-subtext">All analytics are computed locally from your completed teaching sessions. Zero telemetry sent to external servers.</p>
+          
+          <div class="analytics-stats-grid">
+            <div class="stat-card">
+              <span class="stat-val" id="stat-sessions-count">0</span>
+              <span class="stat-lbl">Teaching Sessions Logged</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-val" id="stat-minutes-delivered">0m</span>
+              <span class="stat-lbl">Classroom Minutes Delivered</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-val" id="stat-completion-rate">0%</span>
+              <span class="stat-lbl">Phase Completion Rate</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-val" id="stat-active-stash-count">0</span>
+              <span class="stat-lbl">Plans in Stash</span>
+            </div>
+          </div>
+
+          <div class="analytics-actions-row">
+            <button type="button" id="log-current-session-btn" class="chunky-btn primary-btn sm-btn">
+              ✅ Log Current Lesson Session as Completed
+            </button>
+            <button type="button" id="export-analytics-btn" class="chunky-btn outline-btn sm-btn">
+              📥 Export Log (JSON)
+            </button>
+          </div>
+
+          <h3 class="session-log-heading">Classroom Session History</h3>
+          <div id="session-log-list" class="session-log-stack">
+            <!-- Rendered dynamically via script.js -->
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" id="clear-analytics-btn" class="chunky-btn sm-btn danger-btn">Clear History</button>
+          <button type="button" id="done-analytics-modal-btn" class="chunky-btn sm-btn outline-btn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI & Privacy Configuration Modal -->
+    <div id="ai-settings-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title">
+      <div class="modal-bento-card ai-settings-card">
+        <div class="modal-head">
+          <div>
+            <span class="sticker sticker-purple">INTELLIGENCE & PRIVACY</span>
+            <h2 id="ai-modal-title" class="modal-heading">AI Provider & Privacy Settings ⚙️</h2>
+          </div>
+          <button type="button" id="close-ai-modal-btn" class="close-round-btn" aria-label="Close AI settings">&times;</button>
+        </div>
+        <div class="modal-body-simple">
+          <div class="ai-mode-selector">
+            <label class="ai-radio-card">
+              <input type="radio" name="aiEngineMode" value="offline" id="ai-mode-offline" checked />
+              <div class="ai-radio-content">
+                <strong>🔒 Offline Pedagogical Heuristic Core (Default & Recommended)</strong>
+                <p>100% private, zero internet latency, instant execution. Runs completely in your browser without transmitting any lesson or student data.</p>
+              </div>
+            </label>
+
+            <label class="ai-radio-card">
+              <input type="radio" name="aiEngineMode" value="custom-proxy" id="ai-mode-proxy" />
+              <div class="ai-radio-content">
+                <strong>🌐 Custom Server-Side Proxy Endpoint</strong>
+                <p>Optionally connect to a secure school-district proxy or backend endpoint. API credentials must remain server-side; secret keys are never accepted or stored in client-side code.</p>
+              </div>
+            </label>
+          </div>
+
+          <div id="proxy-endpoint-group" class="proxy-endpoint-wrap hidden">
+            <label for="custom-endpoint-url" class="card-label">Server-Side Proxy Endpoint URL</label>
+            <input
+              type="url"
+              id="custom-endpoint-url"
+              class="chunky-input"
+              placeholder="https://your-district-proxy.edu/api/generate-lesson"
+            />
+            <p class="card-hint">Must accept JSON POST requests with topic, classLevel, and totalMinutes, returning validated PlanCraft schema.</p>
+
+            <label class="privacy-consent-check">
+              <input type="checkbox" id="ai-privacy-consent-check" />
+              <span>I give informed consent to transmit lesson parameters to this configured endpoint. No student PII will ever be collected.</span>
+            </label>
+          </div>
+
+          <div class="ai-security-callout">
+            <strong>🛡️ Privacy & Security Guarantee:</strong>
+            PlanCraft strictly adheres to educational privacy principles. No user registration, no telemetry, and zero client-side storage of confidential API keys. All AI-assisted suggestions are strictly labeled as editable drafts.
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" id="test-ai-connection-btn" class="chunky-btn sm-btn outline-btn hidden">Test Proxy</button>
+          <button type="button" id="save-ai-settings-btn" class="chunky-btn sm-btn primary-btn">Save Settings</button>
+          <button type="button" id="cancel-ai-settings-btn" class="chunky-btn sm-btn outline-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print & Export Dossier Modal -->
+    <div id="print-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="print-modal-title">
+      <div class="modal-bento-card print-dialog-card">
+        <div class="modal-head">
+          <div>
+            <span class="sticker sticker-yellow">PRINT & PDF EXPORT</span>
+            <h2 id="print-modal-title" class="modal-heading">Print / Export Dossier 🖨️</h2>
+          </div>
+          <button type="button" id="close-print-modal-btn" class="close-round-btn" aria-label="Close print dialog">&times;</button>
+        </div>
+        <div class="modal-body-simple">
+          <p class="print-intro-note">Choose the print layout format tailored for your immediate classroom need:</p>
+          
+          <div class="print-mode-grid">
+            <label class="print-option-card">
+              <input type="radio" name="printFormat" value="teacher" checked />
+              <div class="print-option-content">
+                <span class="print-option-icon">👩‍🏫</span>
+                <strong>Teacher Master Dossier</strong>
+                <p>Complete plan with bell schedule, phase objectives, pacing alerts, formative check rubrics, teacher moves, and personal notes.</p>
+              </div>
+            </label>
+
+            <label class="print-option-card">
+              <input type="radio" name="printFormat" value="student" />
+              <div class="print-option-content">
+                <span class="print-option-icon">🧑‍🎓</span>
+                <strong>Student Guided Worksheet</strong>
+                <p>Distraction-free student handout: Name & Date header, Learning Targets, "I Can" success checklist, warm-up note box, guided practice section, and 3-Tier Exit Ticket.</p>
+              </div>
+            </label>
+          </div>
+
+          <div class="print-options-extras">
+            <label class="print-extra-checkbox">
+              <input type="checkbox" id="print-include-quiz" checked />
+              <span>Include 3-Tier Quiz & Exit Ticket Assessment</span>
+            </label>
+            <label class="print-extra-checkbox">
+              <input type="checkbox" id="print-include-notes" checked />
+              <span>Include Ruled Notes / Practice Lines</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" id="execute-print-btn" class="chunky-btn primary-btn">🖨️ Open Print Preview / PDF</button>
+          <button type="button" id="cancel-print-btn" class="chunky-btn outline-btn">Cancel</button>
         </div>
       </div>
     </div>
@@ -404,6 +668,6 @@
     <!-- Toast Notification -->
     <div id="toast" class="pop-toast hidden" role="status" aria-live="polite"></div>
 
-    <script src="./script.js"></script>
+    <script type="module" src="./script.js"></script>
   </body>
 </html>

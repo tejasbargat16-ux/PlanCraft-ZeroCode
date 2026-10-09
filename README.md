@@ -1,135 +1,81 @@
-# PlanCraft — The 10-Minute Lesson Architect
+# PlanCraft 2.0 — Production-Quality Lesson Architect
 
-> **Instant, high-energy lesson planning for educators.**
-> Enter your topic, select your grade level and class duration, and generate an exact, mathematically timed pedagogical plan with real-time bell reminders and an interactive classroom timer.
+> **Polished, responsive, offline-first lesson planning assistant for educators.** Enter your topic, select your grade level and class duration, and generate an exact, mathematically timed pedagogical plan with real-time bell reminders, pedagogical quality analysis, formative assessment generators, and an interactive fullscreen classroom timer.
 
 ![PlanCraft Preview](./screenshots/preview.png)
 
 ---
 
-## Overview
+## ⚡ What's New in PlanCraft 2.0
 
-**PlanCraft** is a lightweight, zero-runtime-dependency web application built for teachers who need structured lesson plans fast. Whether you're prepping in the 10 minutes before the first period bell or structuring a long block seminar, PlanCraft calculates exact phase timings, calibrates pacing for different age groups, maps the session to the real classroom clock, and stores everything offline in the browser.
+PlanCraft 2.0 represents a production-grade upgrade that transforms the original lightweight planner into a comprehensive, resilient, offline-first teaching assistant while preserving its **zero-runtime-dependency** design and vanilla HTML/CSS/JavaScript architecture:
 
----
-
-## Features
-
-### ⏱️ Pedagogical Planning & Exact Time Allocation
-
-- **Exact-Duration Guarantee**: Uses the Hare-Niemeyer (Largest Remainder) algorithm so every phase's minutes sum to **exactly** the requested total — no rounding drift or lost minutes.
-- **Dynamic Minute Rebalancing**: In-plan `+` / `-` steppers let teachers shift minutes between phases on the fly while keeping the total duration fixed.
-- **Class-Level Adaptation**: Adjusts cognitive load, autonomy level, and discussion strategies for Elementary (K-5), Middle School (6-8), High School (9-12), College, and Adult Education.
-- **Pedagogical Format Styles**:
-  - **Standard Balanced** — Hook • Model • Practice • Exit
-  - **Interactive Collaboration** — heavy peer-group / lab focus
-  - **Direct Instruction & Mastery** — step-by-step drills
-  - **Socratic Inquiry & Debate** — critical-thinking arc
-- **Curated Starter Chips**: Filterable quick-select topics across Science/STEM, Mathematics, English/ELA, History/Social Studies, and Arts/Code.
-
-### 🕒 Real-Time Clock & Classroom Timer
-
-- **Live Bell Schedule Mapping**: Converts phase durations into actual wall-clock intervals (e.g. `09:00 – 09:08`, `09:08 – 09:23`) based on the class start time.
-- **In-Class Countdown Presenter**: Fullscreen-ready timer modal with a large digital readout, phase progress bar, active teacher prompts, and keyboard shortcuts:
-  - `Space` — pause / resume
-  - `P` — previous phase
-  - `N` — next phase
-- **Audio & Push Reminders**: Built-in Web Audio synthesized chimes (no external audio files) and optional browser notifications with configurable advance warning (1, 2, or 3 minutes before a transition).
-
-### 📁 Persistence, Sharing & Export
-
-- **100% Offline Local Storage**: Active lesson plans and custom notes survive browser refreshes.
-- **"My Stash" Library**: Save, name, review, and manage multiple lesson plans locally.
-- **One-Tap URL Sharing**: Encodes topic, duration, grade level, style, and start time into shareable link parameters.
-- **Clean Print / PDF Output**: A dedicated `@media print` stylesheet formats the plan into a distraction-free handout.
-- **Plaintext Export**: Copy to clipboard or download a `.txt` file with phase objectives, teacher moves, and formative checks.
-
-### 🎨 Visual Design & Usability
-
-- **Neo-Bento Aesthetic**: High-contrast, tactile interface with clear visual hierarchy, color-coded phase tracks, and smooth micro-animations.
-- **Dark & Light Mode**: Persistent theme toggle that respects system preferences.
-- **Responsive Layout**: Fluid desktop grid with a sticky quick-action dock on mobile and tablet.
+1. **Mathematical Duration Invariants (1–480 min)**: Strict finite positive integer validation with Hare-Niemeyer integer distribution. Dedicated models for ultra-short micro-lessons (1m sprint, 2m kickoff, 3m triple-step) and extended block sessions up to 8 hours.
+2. **Absolute-Deadline Presenter Timer**: Eliminates background tab throttling drift using real wall-clock timestamps (`targetEndTimeMs`), tab visibility-change resynchronization, duplicate interval prevention, phase reset, and Fullscreen presentation mode (`F` key).
+3. **Lesson-Quality Alignment Rubric**: Evaluates instructional balance, student active autonomy ratio, formative check density, and flags pacing risks (such as lectures exceeding 20 minutes).
+4. **Editable Objectives & Success Criteria**: Aligned SWBAT (*Students Will Be Able To...*) learning targets and measurable *"I Can"* success criteria with live inline editing and persistent auto-save.
+5. **3-Tier Quiz & Exit Ticket Generator**: Automated educational assessment drafts with Beginner (Recall), Intermediate (Apply), and Advanced (Transfer) questions and sample answer keys.
+6. **Dual Print & PDF Export Modes**:
+   - 👩‍🏫 **Teacher Master Dossier**: Pacing breakdown, bell intervals, teacher think-alouds, formative checks, and personal notes.
+   - 🧑‍🎓 **Student Guided Worksheet**: Clean printable student sheet with Name/Date header, Learning Targets, "I Can" checklist, guided notes box, and 3-Tier Exit Ticket.
+7. **Enhanced Stash Library**: Live keyword search, grade level filtering, plan duplication, inline renaming, single JSON import/export, and versioned JSON backup/restore with schema validation.
+8. **Multi-Day Unit Workspace**: Sequence individual lessons into multi-day curricular arcs with overarching essential questions and cumulative instructional minutes.
+9. **Teaching Progress Analytics**: 100% local session logger tracking completed teaching periods, classroom minutes delivered, and phase completion rates.
+10. **Optional AI Provider Interface**: Server-side proxy architecture keeping secret credentials off client devices, accompanied by schema validation, network timeout safeguards, offline fallback, and clear *"AI Draft"* teacher labeling.
+11. **Automated Test Suite**: 41 comprehensive automated tests using Node's native test runner (`node:test`) covering mathematical allocations, boundaries, migrations, escaping, and rubrics.
 
 ---
 
-## Tech Stack
+## 🎯 Pedagogical Architecture
 
-PlanCraft is intentionally built with vanilla web standards for speed, security, and long-term maintainability.
-
-| Technology | Purpose |
-| :--- | :--- |
-| **HTML5** | Semantic, accessible structure with ARIA roles and live regions |
-| **Vanilla CSS3** | Custom properties, CSS Grid, Flexbox, media queries, print styles |
-| **Vanilla JavaScript (ES6+)** | Zero-dependency app logic, state management, and DOM orchestration |
-| **Web Audio API** | Synthetic audio chimes and tactile feedback (no audio assets) |
-| **Notifications API** | Transition warnings and bell alerts |
-| **LocalStorage API** | Client-side persistence with no backend |
-| **Vite (dev server)** | Optional fast local preview server |
-
----
-
-## How It Works
+PlanCraft is engineered around research-backed pedagogical frameworks:
 
 ```text
-┌─────────────────────────────────┐
-│ 1. Input Details                │ ── Topic, Grade Level, Duration, Style, Start Time
-└────────────────┬────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────┐
-│ 2. Mathematical Engine          │ ── Largest-Remainder integer minute distribution
-└────────────────┬────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────┐
-│ 3. Interactive Dashboard        │ ── Visual timeline, bell schedule & pedagogical cards
-└────────────────┬────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────┐
-│ 4. In-Class Execution           │ ── Presenter countdown timer, audio bells, notes
-└────────────────┬────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────┐
-│ 5. Persist / Share / Print      │ ── Stash library, URL sharing, PDF printing, TXT
-└─────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Lesson Arc Structure                            │
+├──────────────┬──────────────────┬─────────────────┬────────────────────┤
+│ 1. The Hook  │ 2. Direct Model  │ 3. Active Collab│ 4. Independent App │
+│ (Schema/Goal)│ ("I Do" Think)   │ ("We Do" Guide) │ ("You Do" Mastery) │
+├──────────────┴──────────────────┴─────────────────┴────────────────────┤
+│               5. Formative Closure & Exit Ticket Slip                  │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-1. **Enter lesson parameters**: Type a topic (or tap a starter chip), select the grade level, choose total minutes (or a preset like *10m Sprint* / *45m Period*), and set the class start time.
-2. **Generate the plan**: Click **Generate Lesson Plan** (`⌘ + Enter` / `Ctrl + Enter`).
-3. **Review & fine-tune**: Inspect the visual timeline and section breakdown, and adjust phase minutes with the `+` / `-` steppers.
-4. **Teach with live pacing**: Click **Teach Phase** or **Presenter Timer** to launch the countdown with stage-by-stage instructions.
-5. **Save, share, or export**: Save to **My Stash**, copy the plan, export a `.txt` file, generate a shareable URL, or print to PDF.
+- **Elementary (K-5)**: Kinesthetic, visual storytelling, manipulative scaffolding, and high warmth.
+- **Middle School (6-8)**: Gamified collaboration, structured peer discourse (think-pair-share), and tiered challenge levels.
+- **High School (9-12)**: Standards-aligned analytical inquiry, real-world relevance, and evidence citation.
+- **College / University**: Socratic seminar protocols, theoretical evaluation, and self-directed synthesis.
+- **Adult & Professional**: Applied, outcome-oriented workplace case scenarios and immediate practical takeaways.
 
 ---
 
-## Project Structure
+## 🛡️ Reliability & Security Guarantees
 
-```text
-plancraft/
-├── index.html        # Application structure and modal dialogs
-├── style.css         # Neo-Bento design system, themes, mobile & print styles
-├── script.js         # Core pedagogical engine, timer, persistence & audio
-├── vite.config.js    # Minimal Vite dev configuration
-├── package.json      # Project metadata and lightweight dev scripts
-├── LICENSE           # MIT License
-├── .gitignore        # Git exclusion rules
-├── screenshots/      # Application interface preview
-│   └── preview.png
-└── README.md         # Project documentation
-```
+- **100% Offline-First**: All application logic, scheduling, synthesis, and storage execute client-side. Works completely without an internet connection.
+- **Data Persistence & Migration (Schema v3)**: Automatic data migration for legacy records (`v1`/`v2` to `v3`). Protects custom teacher notes, completed phase checkboxes, prep checklists, and timer states across browser reloads.
+- **Storage Quota Guard**: Gracefully intercepts `QuotaExceededError` and provides backup reminders without crashing.
+- **Universal HTML Escaping**: Strictly sanitizes all user-entered topics, notes, URL parameters, and imported JSON structures to eliminate dynamic HTML injection vulnerabilities.
+- **Educational Privacy Principle**: Zero telemetry, zero third-party trackers, zero user logins, and zero student PII collection.
 
 ---
 
-## Running Locally
+## 💻 Tech Stack & Zero-Dependency Design
 
-Because PlanCraft is built with pure web standards, you can run it in two ways.
+| Layer | Implementation | Details |
+| :--- | :--- | :--- |
+| **Markup** | HTML5 Semantic Architecture | Accessible ARIA landmarks, dialog roles, and live regions |
+| **Styling** | Vanilla CSS3 | Custom design system tokens, Neo-Bento cards, print stylesheets, reduced motion |
+| **Logic** | Vanilla Modern JavaScript | ES6+ modular architecture, zero runtime dependencies |
+| **Audio** | Web Audio API | Synthesized micro-tones and chimes (zero external audio files) |
+| **Testing** | Node.js Test Runner | Built-in `node:test` and `node:assert/strict` (zero test dependencies) |
+| **Build & Dev** | Vite 6 | Development preview server and optimized production bundler |
 
-### Option A: Standalone (No Node.js Required)
+---
 
-Open `index.html` directly in any modern browser (Chrome, Edge, Firefox, Safari), or serve it with any static server:
+## 🚀 Getting Started
 
+### Option A: Direct Static Launch (Zero Install)
+Because PlanCraft has zero runtime dependencies, you can open `index.html` directly in any modern browser:
 ```bash
 # Python 3
 python -m http.server 3000
@@ -138,52 +84,79 @@ python -m http.server 3000
 php -S localhost:3000
 ```
 
-### Option B: Vite Dev Server
+### Option B: Using Vite Development Server
+```bash
+# 1. Install dev tools
+npm install
 
-For a hot-reloading local server:
-
-1. Install dev dependencies:
-
-   ```bash
-   npm install
-   ```
-
-2. Start the server:
-
-   ```bash
-   npm run dev
-   ```
-
-3. Open the URL printed in the terminal (the port is set in `vite.config.js`, e.g. [http://localhost:3000](http://localhost:3000)).
+# 2. Start local development server
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## Responsive Design
+## 🧪 Running Automated Tests
 
-PlanCraft is designed to work across common viewport sizes:
+PlanCraft 2.0 includes an automated test suite executed with Node's native test runner:
 
-- **Desktop (1024px+)**: Multi-column bento grid with a full timeline tracker and integrated control deck.
-- **Tablet (768px – 1023px)**: Adaptive wrapping, touch-friendly steppers, and accessible modal overlays.
-- **Mobile (< 768px)**: Single-column card flow, full-width touch targets, and a fixed bottom quick-action bar for in-class use.
-- **Print / PDF**: Clean black-and-white layout that hides UI controls and navigation for crisp printouts.
+```bash
+npm test
+```
 
----
-
-## Competition
-
-This project was developed for the **ZeroCode** prompt-engineering competition, showing how pedagogical design principles, mathematical time guarantees, and client-side web standards can come together in an instant, practical teaching tool.
-
----
-
-## Future Improvements
-
-- [ ] Customizable phase templates and user-defined default duration weights
-- [ ] Export to Google Classroom and LMS calendar formats (`.ics`)
-- [ ] Multi-day unit planning with sequenced lesson chains
-- [ ] Multi-language localization for international classrooms
+### Test Coverage Highlights:
+- **Duration Validation**: Empty, zero, negative, fractional, excessive (>480m), NaN, and non-finite inputs.
+- **Time Allocation Invariants**: Mathematical Hare-Niemeyer exact sum checks across 1m, 2m, 3m, 5m, 10m, 30m, 45m, 60m, 90m, 120m, 240m, and 480m durations.
+- **Bell Schedule Engine**: Sequential clock intervals and hour boundary transitions.
+- **Dynamic Rebalancing**: Invariant preservation during in-plan $+1$m / $-1$m duration shifts.
+- **Quality Rubric Calculations**: Autonomy ratios, formative coverage, and pacing alerts.
+- **3-Tier Assessment Generator**: Question generation and sample answer criteria.
+- **Schema Migrations**: Seamless upgrade of legacy plans to Schema v3.
+- **Security & HTML Escaping**: Sanitization of script tags, quotes, ampersands, and angle brackets.
 
 ---
 
-## License
+## 📦 Production Build
 
-This project is open-source and available under the [MIT License](LICENSE).
+To create the production distribution bundle:
+```bash
+npm run build
+```
+Output artifacts are generated in `dist/` with optimized HTML, CSS, and JavaScript.
+
+---
+
+## 📂 Project Structure
+
+```text
+plancraft/
+├── index.html              # Main semantic UI and accessible modal dialogs
+├── style.css               # Neo-Bento design system, themes, print & accessibility rules
+├── script.js               # PlanCraft 2.0 core engine, absolute timer, persistence & APIs
+├── vite.config.js          # Vite development and bundle configuration
+├── package.json            # Scripts and metadata
+├── tests/
+│   └── plancraft.test.js   # Automated test suite (41 test cases)
+├── screenshots/
+│   └── preview.png         # Interface preview
+└── README.md               # Documentation
+```
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Context | Action |
+| :--- | :--- | :--- |
+| `⌘ + Enter` / `Ctrl + Enter` | Anywhere | Generate lesson plan from current inputs |
+| `Space` | Classroom Timer Modal | Pause / Resume countdown timer |
+| `F` | Classroom Timer Modal | Toggle Fullscreen Classroom Presentation |
+| `N` | Classroom Timer Modal | Advance to Next Phase |
+| `P` | Classroom Timer Modal | Return to Previous Phase |
+| `Escape` | Any Modal | Close active modal dialog |
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
